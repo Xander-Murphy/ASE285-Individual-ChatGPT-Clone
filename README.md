@@ -64,10 +64,8 @@
 
 ## Project Documentation
 
-- [Project Plan Presentation (PPP)](link-to-ppp)
-- [Individual Contributions - Ken](link-to-ken)
-- [Individual Contributions - Jane](link-to-jane)
-- [Individual Contributions - Tim](link-to-tim)
+- [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)
+- [Individual Contributions - Xander](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/individual/Xander/progress.md)
 
 ## Schedule & Milestones
 
