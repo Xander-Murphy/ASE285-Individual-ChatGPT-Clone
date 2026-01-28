@@ -1,7 +1,3 @@
----
-marp: true
----
-
 # Chat285 - Individual Project
 
 ## Team Members
