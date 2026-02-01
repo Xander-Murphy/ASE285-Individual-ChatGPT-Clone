@@ -18,23 +18,43 @@
 
 ## Features and Requirements
 
-### Features & Requirements
+### Features
 
-  1. Access issue:
-     - ...
+  1. Chat centered user interactions
+  2. Chat sessions
+  3. Multiple conversations in a session
+  4. Conversation History
 
-  We have N features and M requirements.
 
-  Link: [...]
 
 ### Non-Functional Requirements
 
-- Web applications.
-- ...
+  - React-based frontend
+  - Integration with ChatGPT API
+  - local torage and session storage persistence
 
 ## Data Model
 
-  ...
+  The system stores chat-related data locally to support conversation persistence
+
+  ### User
+  - userID
+  - sessionID
+  
+  ### ChatSession
+  - sessionID
+  - createdAt
+  - conversations
+
+  ### Conversation
+  - conversationID
+  - title
+  - messages[]
+
+  ### Message
+  - messageID
+  - role (user or response)
+  - timestamp
 
 ## Architecture
 
@@ -66,7 +86,7 @@
 
 - [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)
 - [Individual Contributions - Xander](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/individual/Xander/progress.md)
-
+- 
 ## Schedule & Milestones
 
 ### Sprint 1
