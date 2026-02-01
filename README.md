@@ -2,7 +2,7 @@
 
 ## Team Members
 
-- **Xander** (Team Leader)
+- **Xander** (Solo Contributor)
 
 ## Project Description
 
@@ -58,9 +58,15 @@
 
 ## Architecture
 
-  [Insert architecture diagram here]
+  This application follows a client-server architecture.
 
-  ...
+  - The frontend is built using React and handles user interaction and UI rendering.
+  - The backend is built using NodeJS and Express to manage API requests.
+  - WebSockets are used to support real-time chat communication.
+  - The backend communicates with OpenAI's API to generate chat responses
+  - Conversation data persists in local and session storages.
+
+  [Insert architecture diagram here]
 
   Link:
 
@@ -82,6 +88,8 @@
 
 - ...
 
+  Link:
+
 ## Project Documentation
 
 - [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)
@@ -91,12 +99,15 @@
 
 ### Sprint 1
 
--
--
+- Project setup and Repository initialization
+- Basic UI and interface
+- NodeJS and Express setup
+- OpenAI API integration
 
 ### Sprint 2
 
--
--
+- Websocket integration for real-time messaging
+- Conversation and session management
+- Local and session storage persistance
+- UI improvements and bug fixes
 
-  Link:
