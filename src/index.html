@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gemini Chat</title>
+</head>
+<body>
+  <h2>Chat with Gemini</h2>
+
+  <textarea id="userInput" rows="4" cols="50" placeholder="Type your message..."></textarea>
+  <br><br>
+
+  <button onclick="sendMessage()">Send</button>
+
+  <h3>Response:</h3>
+  <p id="responseText"></p>
+
+  <script>
+    async function sendMessage() {
+      const message = document.getElementById("userInput").value;
+
+      const response = await fetch("http://localhost:3000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      document.getElementById("responseText").innerText = data.reply;
+    }
+  </script>
+</body>
+</html>
