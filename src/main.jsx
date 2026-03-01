@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from "react";
-
+import { sendMessageToServer } from "./lib/services/chatServices";
+import { createMessage } from "./lib/models/message";
 import { createRoot } from "react-dom/client";
 import "/styles.css"
 
@@ -24,28 +25,15 @@ function App() {
   const sendMessage = async () => {
     if (!input) return;
 
-    const userMessage = {
-      role: "user",
-      content: input,
-    };
+    const userMessage = createMessage("user", input);
 
     setMessages((prev) => [...prev, userMessage]);
 
-    const response = await fetch("http://localhost:5000/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input }),
-    });
+    const data = await sendMessageToServer(input);
 
-    const data = await response.json();
+    const assistantMessage = createMessage("assistant", data.reply);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-       role: "assistant",
-       content: data.reply
-      },
-    ]);
+    setMessages((prev) => [...prev, assistantMessage]);
 
     setInput("");
   };
