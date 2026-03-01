@@ -87,6 +87,11 @@ Sprint 2
  - localStorage to store all chats
  - Moving app to electron
 ---
+# Sprint 1 Requirements
+ - React-based frontend
+ - Integration with ChatGPT API
+ - local storage and session storage persistence
+---
 # Project Documentation
 
 - [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)
