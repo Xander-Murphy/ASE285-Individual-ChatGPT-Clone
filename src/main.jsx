@@ -1,5 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
+
 import { createRoot } from "react-dom/client";
+import "/styles.css"
 
 function App() {
   const [messages, setMessages] = useState(() => {
@@ -9,10 +11,16 @@ function App() {
 
   const [input, setInput] = useState("");
 
+  const chatEndRef = useRef(null);
+
   useEffect(() => {
     localStorage.setItem("chat", JSON.stringify(messages)); 
   }, [messages]);
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+  
   const sendMessage = async () => {
     if (!input) return;
 
@@ -43,22 +51,36 @@ function App() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-        <h1>My GPT Clone</h1>
-      <div>
+    <div className="app">
+      <header className="header">
+        My GPT Clone
+      </header>
+
+      <div className="chat-window">
         {messages.map((msg, index) => (
-          <div key={index}>
-            <strong>{msg.role}:</strong> {msg.content}
+          <div
+            key={index}
+            className={`message ${msg.role}`}
+          >
+            <div className="bubble">
+              {msg.content}
+            </div>
           </div>
         ))}
+
+        <div ref={chatEndRef} />
       </div>
 
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div> 
+      <div className="input-bar">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Send a message..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </div>
   );
 }
 
