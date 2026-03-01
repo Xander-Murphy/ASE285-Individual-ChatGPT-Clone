@@ -75,6 +75,18 @@ This application follows a client-server architecture.
   - Conversation data persists in local and session storages.
 
 ---
+# Sprints
+
+Sprint 1
+ - Basic chat interactions with model.
+ - Chat Sessions
+ - Memory of the current session.
+ 
+Sprint 2
+ - Multiple conversations
+ - localStorage to store all chats
+ - Moving app to electron
+---
 # Project Documentation
 
 - [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)

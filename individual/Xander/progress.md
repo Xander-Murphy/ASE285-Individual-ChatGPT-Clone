@@ -1,0 +1,4 @@
+- Week 1: Basic repository filling with a structure for the app
+- Week 2: Surface level research into unfamiliar systems and tools
+- Week 3: Basic construction of a conversation with a LLM
+- Week 4: Stylized chat and basic react implementation
