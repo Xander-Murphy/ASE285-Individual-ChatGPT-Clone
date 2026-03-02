@@ -5,4 +5,11 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  test: {
+    globals: true,
+    include: [
+      "../tests/**/*.{test,spec}.js",
+      "**/*.{test,spec}.js"
+    ]
+  }
 });
