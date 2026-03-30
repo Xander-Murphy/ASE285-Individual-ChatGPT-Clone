@@ -1,7 +1,9 @@
 import React, {useState, useEffect, useRef} from "react";
 import { sendMessageToServer } from "./lib/services/chatServices";
 import { createMessage } from "./lib/models/message";
+import MessageBubble from "./lib/widgets/messageBubble";
 import { createRoot } from "react-dom/client";
+
 import "/styles.css"
 
 function App() {
@@ -45,15 +47,8 @@ function App() {
       </header>
 
       <div className="chat-window">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`message ${msg.role}`}
-          >
-            <div className="bubble">
-              {msg.content}
-            </div>
-          </div>
+        {messages.map((msg) => (
+          <MessageBubble key={msg.messageID} message={msg} />
         ))}
 
         <div ref={chatEndRef} />
