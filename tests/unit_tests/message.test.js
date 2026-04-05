@@ -18,7 +18,7 @@ describe("createMessage", () => {
     const message = createMessage("user", "Hello world");
 
     expect(message).toEqual({
-      id: "mock-uuid-123",
+      messageID: "mock-uuid-123",
       role: "user",
       content: "Hello world",
       timestamp: 1234567890

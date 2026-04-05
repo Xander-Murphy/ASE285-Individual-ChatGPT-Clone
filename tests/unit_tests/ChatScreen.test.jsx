@@ -1,0 +1,98 @@
+import React from "react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import ChatScreen from "../../src/lib/screens/ChatScreen";
+
+vi.mock("../../src/lib/services/chatServices", () => ({
+  sendMessageToServer: vi.fn(),
+}));
+
+vi.mock("../../src/lib/models/message", () => ({
+  createMessage: vi.fn((role, content) => ({ messageID: "test-id", role, content })),
+}));
+
+import { sendMessageToServer } from "../../src/lib/services/chatServices";
+
+describe("ChatScreen", () => {
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("renders the header", () => {
+    render(<ChatScreen />);
+    expect(screen.getByText("My GPT Clone")).toBeInTheDocument();
+  });
+
+  it("renders the input and send button", () => {
+    render(<ChatScreen />);
+    expect(screen.getByPlaceholderText("Send a message...")).toBeInTheDocument();
+    expect(screen.getByText("Send")).toBeInTheDocument();
+  });
+
+  it("renders messages loaded from localStorage", () => {
+    localStorage.setItem(
+      "chat",
+      JSON.stringify([{ messageID: "1", role: "user", content: "Saved message" }])
+    );
+    render(<ChatScreen />);
+    expect(screen.getByText("Saved message")).toBeInTheDocument();
+  });
+
+  it("sends a message and displays the reply when Send is clicked", async () => {
+    sendMessageToServer.mockResolvedValue({ reply: "Hello from AI!" });
+
+    render(<ChatScreen />);
+
+    const input = screen.getByPlaceholderText("Send a message...");
+    fireEvent.change(input, { target: { value: "Hi there" } });
+    fireEvent.click(screen.getByText("Send"));
+
+    expect(await screen.findByText("Hi there")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Hello from AI!")).toBeInTheDocument();
+    });
+  });
+
+  it("clears the input after sending a message", async () => {
+    sendMessageToServer.mockResolvedValue({ reply: "Got it!" });
+
+    render(<ChatScreen />);
+
+    const input = screen.getByPlaceholderText("Send a message...");
+    fireEvent.change(input, { target: { value: "Test message" } });
+    fireEvent.click(screen.getByText("Send"));
+
+    await waitFor(() => {
+      expect(input.value).toBe("");
+    });
+  });
+
+  it("does not call sendMessageToServer when input is empty", () => {
+    render(<ChatScreen />);
+    fireEvent.click(screen.getByText("Send"));
+    expect(sendMessageToServer).not.toHaveBeenCalled();
+  });
+
+  it("sends a message when Enter is pressed", async () => {
+    sendMessageToServer.mockResolvedValue({ reply: "Enter works!" });
+
+    render(<ChatScreen />);
+
+    const input = screen.getByPlaceholderText("Send a message...");
+    fireEvent.change(input, { target: { value: "Pressing enter" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    await waitFor(() => {
+      expect(sendMessageToServer).toHaveBeenCalledWith("Pressing enter");
+    });
+  });
+
+});
