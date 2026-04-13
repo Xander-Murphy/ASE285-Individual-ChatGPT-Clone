@@ -9,7 +9,7 @@ vi.mock("../../src/lib/services/chatServices", () => ({
 }));
 
 vi.mock("../../src/lib/models/message", () => ({
-  createMessage: vi.fn((role, content) => ({ messageID: "test-id", role, content })),
+  createMessage: vi.fn((role, content) => ({ messageID: crypto.randomUUID(), role, content })),
 }));
 
 import { sendMessageToServer } from "../../src/lib/services/chatServices";

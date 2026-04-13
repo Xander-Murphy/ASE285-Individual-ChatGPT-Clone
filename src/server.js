@@ -30,58 +30,32 @@ let chatSession = {
     }
   ]
 };
+
 app.post("/api/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, history } = req.body;
 
-    console.log("chatSession:", chatSession);
-    if (!chatSession.conversations || chatSession.conversations.length === 0) {
-      chatSession.conversations = [
-        {
-          conversationID: uuidv4(),
-          title: "New Chat",
-          messages: [],
-        },
-      ];
-    }
-
-    const conversation = chatSession.conversations[0];
-
-    // Push user message
-    conversation.messages.push({
-      messageID: uuidv4(),
-      role: "user",
-      content: message,
-      timestamp: new Date(),
-    })
-
-    // Send full history to model so it has memory
-    const response = await client.chat.completions.create({
-      model: "openai/gpt-oss-20b",
-      messages: conversation.messages.map((msg) => ({
+    // Build message list from client history + new user message
+    const messages = [
+      ...history.map((msg) => ({
         role: msg.role,
         content: msg.content,
-      }))
+      })),
+      { role: "user", content: message },
+    ];
+
+    const response = await client.chat.completions.create({
+      model: "openai/gpt-oss-20b",
+      messages,
     });
-    console.log("FULL RESPONSE:", JSON.stringify(response, null, 2));
 
     const assistantReply = response.choices[0].message.content;
 
-    conversation.messages.push({
-      messageID: uuidv4(),
-      role: "assistant",
-      content: assistantReply,
-      timestamp: new Date(),
-    });
-
-    res.json({
-      reply: assistantReply,
-      session: chatSession,
-    });
+    res.json({ reply: assistantReply });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({error: "Something went wrong"});
+    res.status(500).json({ error: "Something went wrong" });
   }
 });
 
