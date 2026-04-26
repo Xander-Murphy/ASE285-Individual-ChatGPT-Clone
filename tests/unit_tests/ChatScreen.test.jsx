@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import ChatScreen from "../../src/lib/screens/ChatScreen";
@@ -28,7 +28,7 @@ describe("ChatScreen", () => {
 
   it("renders the header", () => {
     render(<ChatScreen />);
-    expect(screen.getByText("My GPT Clone")).toBeInTheDocument();
+    expect(screen.getByRole("banner")).toHaveTextContent("New Chat");
   });
 
   it("renders the input and send button", () => {
@@ -38,10 +38,19 @@ describe("ChatScreen", () => {
   });
 
   it("renders messages loaded from localStorage", () => {
-    localStorage.setItem(
-      "chat",
-      JSON.stringify([{ messageID: "1", role: "user", content: "Saved message" }])
-    );
+    const convoID = crypto.randomUUID();
+    localStorage.setItem("conversations", JSON.stringify([
+      {
+        conversationID: convoID,
+        title: "New Chat",
+        createdAt: Date.now(),
+        messages: [
+          { messageID: "1", role: "user", content: "Saved message", timestamp: 0 }
+        ]
+      }
+    ]));
+    localStorage.setItem("activeConversationID", convoID);
+
     render(<ChatScreen />);
     expect(screen.getByText("Saved message")).toBeInTheDocument();
   });
@@ -55,9 +64,10 @@ describe("ChatScreen", () => {
     fireEvent.change(input, { target: { value: "Hi there" } });
     fireEvent.click(screen.getByText("Send"));
 
-    expect(await screen.findByText("Hi there")).toBeInTheDocument();
+    const chatWindow = document.querySelector(".chat-window");
+    expect(await within(chatWindow).findByText("Hi there")).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByText("Hello from AI!")).toBeInTheDocument();
+      expect(within(chatWindow).getByText("Hello from AI!")).toBeInTheDocument();
     });
   });
 
@@ -91,7 +101,12 @@ describe("ChatScreen", () => {
     fireEvent.keyDown(input, { key: "Enter" });
 
     await waitFor(() => {
-      expect(sendMessageToServer).toHaveBeenCalledWith("Pressing enter");
+      expect(sendMessageToServer).toHaveBeenCalledWith(
+        "Pressing enter",
+        expect.arrayContaining([
+          expect.objectContaining({ role: "user", content: "Pressing enter" })
+        ])
+      );
     });
   });
 

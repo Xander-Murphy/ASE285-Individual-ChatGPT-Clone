@@ -33,25 +33,24 @@ describe("sendMessageToServer", () => {
     expect(result).toEqual(mockResponse);
   });
 
-  test("includes chat history from localStorage when it exists", async () => {
-    const mockHistory = [
-      { role: "user", content: "Previous message" },
-      { role: "assistant", content: "Previous reply" },
-    ];
-    localStorage.setItem("chat", JSON.stringify(mockHistory));
-
+  it("includes chat history when provided", async () => {
     fetch.mockResolvedValue({
-      json: () => Promise.resolve({ reply: "Response!" }),
+      json: () => Promise.resolve({}),
     });
 
-    await sendMessageToServer("New message");
+    const history = [
+      { role: "user", content: "Previous message" },
+      { role: "assistant", content: "Previous reply" }
+    ];
+
+    await sendMessageToServer("New message", history);
 
     expect(fetch).toHaveBeenCalledWith(
       "http://localhost:5000/api/chat",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "New message", history: mockHistory }),
+        body: JSON.stringify({ message: "New message", history }),
       }
     );
   });
