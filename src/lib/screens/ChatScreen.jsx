@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { sendMessageToServer } from "../services/chatServices";
+import { connectWebSocket, onToken, sendMessageToServer } from "../services/chatServices";
 import { createMessage } from "../models/message";
 import { createConversation } from "../models/conversation";
 import MessageBubble from "../widgets/messageBubble";
@@ -18,10 +18,46 @@ export default function ChatScreen() {
   });
 
   const chatEndRef = useRef(null);
+  const activeIDRef = useRef(activeID);
+  const streamingIDRef = useRef(null);
+
+  useEffect(() => {
+    activeIDRef.current = activeID;
+  }, [activeID]);
 
   //Active conversation's messages from state
   const activeConversation = conversations.find((c) => c.conversationID === activeID);
   const activeMessages = activeConversation?.messages ?? [];
+
+  useEffect(() => {
+    connectWebSocket();
+
+    onToken((token) => {
+      if (token === null) {
+        streamingIDRef.current = null;
+        return;
+      }
+
+      setConversations((prev) =>
+        prev.map((c) => {
+          if (c.conversationID !== activeIDRef.current) return c;
+
+          const messages = [...c.messages];
+          const lastMessage = messages[messages.length -1];
+
+          if (lastMessage && lastMessage.messageID === streamingIDRef.current) {
+            const updated = { ...lastMessage, content: lastMessage.content + token };
+            messages[messages.length - 1] = updated;
+            return { ...c, messages };
+          }
+
+          const newMessage = createMessage("assistant", token);
+          streamingIDRef.current = newMessage.messageID;
+          return { ...c, messages: [...messages,newMessage] };
+        })
+      );
+    });
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("conversations", JSON.stringify(conversations));
@@ -34,9 +70,10 @@ export default function ChatScreen() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeMessages]);
+
   const [input, setInput] = useState("");
 
-  const sendMessage = async (input) => {
+  const sendMessage = (input) => {
     if (!input) return;
 
     const userMessage = createMessage("user", input);
@@ -49,16 +86,7 @@ export default function ChatScreen() {
       )
     );
 
-    const data = await sendMessageToServer(input, [...activeMessages, userMessage]);
-    const assistantMessage = createMessage("assistant", data.reply);
-
-    setConversations((prev) =>
-      prev.map((c) =>
-        c.conversationID === activeID
-          ? { ...c, messages: [...c.messages, assistantMessage] }
-          : c
-      )
-    );
+    sendMessageToServer(input, [...activeMessages, userMessage]);
   };
 
   const handleCreate = () => {
@@ -102,7 +130,11 @@ export default function ChatScreen() {
 
         <div className="chat-window">
           {activeMessages.map((msg) => (
-            <MessageBubble key={msg.messageID} message={msg} />
+            <MessageBubble
+              key={msg.messageID}
+              message={msg}
+              isStreaming={msg.messageID === streamingIDRef.current}
+            />
           ))}
           <div ref={chatEndRef} />
         </div>

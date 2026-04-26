@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import { WebSocketServer } from "ws";
+import { createServer } from "http";
 
 dotenv.config();
 
@@ -17,34 +19,59 @@ const client = new OpenAI({
   baseURL: "https://api.groq.com/openai/v1",
 });
 
-app.post("/api/chat", async (req, res) => {
-  try {
-    const { message, history } = req.body;
+const server = createServer(app);
 
-    // Build message list from client history + new user message
-    const messages = [
-      ...history.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
-      { role: "user", content: message },
-    ];
+const wss = new WebSocketServer({ server })
 
-    const response = await client.chat.completions.create({
-      model: "openai/gpt-oss-20b",
-      messages,
-    });
 
-    const assistantReply = response.choices[0].message.content;
+wss.on("connection", (ws) => {
+  console.log("Client connected");
 
-    res.json({ reply: assistantReply });
+  ws.on("message", async (data) => {
+    try {
+      const { message, history } = JSON.parse(data);
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Something went wrong" });
-  }
+      const messages = [
+        {
+          role: "system",
+          content: "You are a helpful assistant. When writing math, always use standard LaTeX delimiters: \\(...\\) for inline math and \\[...\\] for display math."
+        },
+        ...history.map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        })),
+        { role: "user", content: message },
+      ];
+
+      const stream = await client.chat.completions.create({
+        model: "openai/gpt-oss-20b",
+        messages,
+        stream: true,
+      });
+
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      for await (const chunk of stream) {
+        const token = chunk.choices[0]?.delta?.content || "";
+        if (token) {
+          ws.send(JSON.stringify({ type: "token", token }));
+          await sleep(30);
+        }
+      }
+
+      ws.send(JSON.stringify({ type: "done" }));
+
+    } catch (error) {
+      console.error(error);
+      ws.send(JSON.stringify({ type: "error", message: "Something went wrong" }));
+    }
+  });
+
+  ws.on("close", () => {
+    console.log("Client disconnected");
+  });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server runnign on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

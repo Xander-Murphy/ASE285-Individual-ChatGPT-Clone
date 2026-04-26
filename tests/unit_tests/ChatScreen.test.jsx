@@ -5,7 +5,9 @@ import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import ChatScreen from "../../src/lib/screens/ChatScreen";
 
 vi.mock("../../src/lib/services/chatServices", () => ({
+  connectWebSocket: vi.fn(),
   sendMessageToServer: vi.fn(),
+  onToken: vi.fn(),
 }));
 
 vi.mock("../../src/lib/models/message", () => ({
@@ -55,9 +57,7 @@ describe("ChatScreen", () => {
     expect(screen.getByText("Saved message")).toBeInTheDocument();
   });
 
-  it("sends a message and displays the reply when Send is clicked", async () => {
-    sendMessageToServer.mockResolvedValue({ reply: "Hello from AI!" });
-
+  it("sends a message when Send is clicked", async () => {
     render(<ChatScreen />);
 
     const input = screen.getByPlaceholderText("Send a message...");
@@ -66,14 +66,15 @@ describe("ChatScreen", () => {
 
     const chatWindow = document.querySelector(".chat-window");
     expect(await within(chatWindow).findByText("Hi there")).toBeInTheDocument();
-    await waitFor(() => {
-      expect(within(chatWindow).getByText("Hello from AI!")).toBeInTheDocument();
-    });
+    expect(sendMessageToServer).toHaveBeenCalledWith(
+      "Hi there",
+      expect.arrayContaining([
+        expect.objectContaining({ role: "user", content: "Hi there" })
+      ])
+    );
   });
 
   it("clears the input after sending a message", async () => {
-    sendMessageToServer.mockResolvedValue({ reply: "Got it!" });
-
     render(<ChatScreen />);
 
     const input = screen.getByPlaceholderText("Send a message...");
@@ -92,8 +93,6 @@ describe("ChatScreen", () => {
   });
 
   it("sends a message when Enter is pressed", async () => {
-    sendMessageToServer.mockResolvedValue({ reply: "Enter works!" });
-
     render(<ChatScreen />);
 
     const input = screen.getByPlaceholderText("Send a message...");
