@@ -11,6 +11,11 @@ export default defineConfig({
     include: [
       "../tests/**/*.test.{js,jsx}",
       "../tests/**/*.spec.{js,jsx}",
-    ]
-  } 
+    ],
+    server: {
+      deps: {
+        inline: ["react-markdown", "remark-math", "rehype-katex"],
+      },
+    },
+  }
 });

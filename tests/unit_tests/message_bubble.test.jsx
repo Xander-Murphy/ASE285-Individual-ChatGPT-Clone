@@ -1,6 +1,7 @@
 import React from "react"
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { vi, describe, it, expect } from "vitest";
 import MessageBubble from "../../src/lib/widgets/messageBubble";
 
 describe("MessageBubble", () => {
@@ -35,6 +36,22 @@ describe("MessageBubble", () => {
     const bubble = container.querySelector(".bubble");
     expect(bubble).toBeInTheDocument();
     expect(bubble).toHaveTextContent("I am an AI.");
+  });
+
+  it("renders assistant message inside the bubble", () => {
+    const message = { role: "assistant", content: "**bold text**" };
+    const { container } = render(<MessageBubble message={message} />);
+    const bubble = container.querySelector(".bubble");
+    expect(bubble).toBeInTheDocument();
+    expect(bubble).toHaveTextContent("bold text");
+  });
+
+  it("renders user messages as plain text without markdown", () => {
+    const message = { role: "user", content: "**not bold**" };
+    const { container } = render(<MessageBubble message={message} />);
+    const bold = container.querySelector("strong");
+    expect(bold).not.toBeInTheDocument();
+    expect(screen.getByText("**not bold**")).toBeInTheDocument();
   });
 
 });

@@ -1,7 +1,7 @@
-export function createConversation() {
+export function createConversation(title = "New Chat") {
   return {
     conversationID: crypto.randomUUID(),
-    title: "New Chat",
+    title,
     createdAt: Date.now(),
     messages: [],
   };

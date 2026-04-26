@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
-import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -17,19 +16,6 @@ const client = new OpenAI({
   apiKey: process.env.GROQ_API_KEY,
   baseURL: "https://api.groq.com/openai/v1",
 });
-
-// In-memory chat session
-let chatSession = {
-  sessionID: uuidv4(),
-  createdAt: new Date(),
-  conversations: [
-    {
-      conversationID: uuidv4(),
-      title: "New Chat",
-      messages: [],
-    }
-  ]
-};
 
 app.post("/api/chat", async (req, res) => {
   try {

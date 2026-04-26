@@ -40,16 +40,11 @@ export default function ChatScreen() {
     if (!input) return;
 
     const userMessage = createMessage("user", input);
-    const isFirstMessage = activeMessages.length === 0;
 
     setConversations((prev) =>
       prev.map((c) =>
         c.conversationID === activeID
-          ? {
-              ...c,
-              title: isFirstMessage ? input.split(" ").slice(0, 3).join(" ") : c.title,
-              messages: [...c.messages, userMessage],
-            }
+          ? { ...c, messages: [...c.messages, userMessage] }
           : c
       )
     );
@@ -67,7 +62,8 @@ export default function ChatScreen() {
   };
 
   const handleCreate = () => {
-    const newConvo = createConversation();
+    const title = prompt("Enter a short name for your chat (This is for you only and cannot be changed)") || "New Chat";
+    const newConvo = createConversation(title);
     setConversations((prev) => [...prev, newConvo]);
     setActiveID(newConvo.conversationID);
   };
