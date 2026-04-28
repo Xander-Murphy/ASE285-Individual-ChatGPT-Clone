@@ -17,6 +17,9 @@ export default function ChatScreen() {
     return localStorage.getItem("activeConversationID") ?? conversations[0].conversationID;
   });
 
+  const [showNewChatModal, setShowNewChatModal] = useState(false);
+  const [newChatTitle, setNewChatTitle] = useState("");
+
   const chatEndRef = useRef(null);
   const activeIDRef = useRef(activeID);
   const streamingIDRef = useRef(null);
@@ -90,12 +93,17 @@ export default function ChatScreen() {
   };
 
   const handleCreate = () => {
-    const title = prompt("Enter a short name for your chat (This is for you only and cannot be changed)") || "New Chat";
+    setShowNewChatModal(true);
+  };
+
+  const confirmCreate = () => {
+    const title = newChatTitle.trim() || "New Chat";
     const newConvo = createConversation(title);
     setConversations((prev) => [...prev, newConvo]);
     setActiveID(newConvo.conversationID);
+    setNewChatTitle("");
+    setShowNewChatModal(false);
   };
-
   const handleDelete = (id) => {
     const remaining = conversations.filter((c) => c.conversationID !== id);
 
@@ -154,6 +162,24 @@ export default function ChatScreen() {
           <button onClick={() => {sendMessage(input); setInput("");}}>Send</button>
         </div>
       </div>
+      {showNewChatModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>New Chat</h3>
+              <input
+                autoFocus
+                value={newChatTitle}
+                onChange={(e) => setNewChatTitle(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && confirmCreate()}
+                placeholder="Enter a chat name..."
+              />
+              <div className="modal-buttons">
+                <button onClick={confirmCreate}>Create</button>
+                <button onClick={() => setShowNewChatModal(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
