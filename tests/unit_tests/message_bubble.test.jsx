@@ -1,7 +1,7 @@
 import React from "react"
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { vi, describe, it, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import MessageBubble from "../../src/lib/widgets/messageBubble";
 
 describe("MessageBubble", () => {
@@ -52,6 +52,27 @@ describe("MessageBubble", () => {
     const bold = container.querySelector("strong");
     expect(bold).not.toBeInTheDocument();
     expect(screen.getByText("**not bold**")).toBeInTheDocument();
+  });
+
+  it("renders streaming assistant message as plain text", () => {
+    const message = { role: "assistant", content: "Streaming..." };
+    const { container } = render(<MessageBubble message={message} isStreaming={true} />);
+    const span = container.querySelector("span");
+    expect(span).toBeInTheDocument();
+    expect(span).toHaveTextContent("Streaming...");
+  });
+
+  it("does not render a span when not streaming", () => {
+    const message = { role: "assistant", content: "Done streaming." };
+    const { container } = render(<MessageBubble message={message} isStreaming={false} />);
+    const span = container.querySelector("span");
+    expect(span).not.toBeInTheDocument();
+  });
+
+  it("renders user messages as plain text even when isStreaming is true", () => {
+    const message = { role: "user", content: "Hello!" };
+    render(<MessageBubble message={message} isStreaming={true} />);
+    expect(screen.getByText("Hello!")).toBeInTheDocument();
   });
 
 });

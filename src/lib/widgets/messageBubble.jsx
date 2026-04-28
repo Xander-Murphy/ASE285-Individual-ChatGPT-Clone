@@ -2,7 +2,16 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
 import "katex/dist/katex.min.css";
+
+function normalizeMath(text) {
+  return text
+    .replace(/\\\[/g, "$$")
+    .replace(/\\\]/g, "$$")
+    .replace(/\\\(/g, "$")
+    .replace(/\\\)/g, "$");
+}
 
 export default function MessageBubble({ message, isStreaming }) {
   return (
@@ -14,9 +23,9 @@ export default function MessageBubble({ message, isStreaming }) {
             : (
               <ReactMarkdown
                 remarkPlugins={[remarkMath]}
-                rehypePlugins={[rehypeKatex]}
+                rehypePlugins={[rehypeRaw, rehypeKatex]}
               >
-                {message.content}
+                {normalizeMath(message.content)}
               </ReactMarkdown>
             )
           : message.content
