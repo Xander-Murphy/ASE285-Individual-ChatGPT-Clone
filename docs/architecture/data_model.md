@@ -1,21 +1,14 @@
 # Data Model
-The system stores chat-related data locally to support conversation persistence
-
-### User
-  - userID
-  - sessionID
-
-### ChatSession
-  - sessionID
-  - createdAt
-  - conversations
+The system stores chat-related data locally using localStorage to support conversation persistence.
 
 ### Conversation
-  - conversationID
-  - title
-  - messages[]
+- conversationID
+- title
+- createdAt
+- messages[]
 
 ### Message
-  - messageID
-  - role (user or response)
-  - timestamp
+- messageID
+- role (user or assistant)
+- content
+- timestamp
