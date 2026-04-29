@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  root: ".",
+  root: "src",
   server: {
     port: 3000,
   },
@@ -9,8 +9,8 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     include: [
-      "tests/**/*.test.{js,jsx}",
-      "tests/**/*.spec.{js,jsx}",
+      "../tests/**/*.test.{js,jsx}",
+      "../tests/**/*.spec.{js,jsx}",
     ],
     server: {
       deps: {

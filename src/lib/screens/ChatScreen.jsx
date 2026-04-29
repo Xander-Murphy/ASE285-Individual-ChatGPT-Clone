@@ -23,6 +23,7 @@ export default function ChatScreen() {
   const chatEndRef = useRef(null);
   const activeIDRef = useRef(activeID);
   const streamingIDRef = useRef(null);
+  const [streamingID, setStreamingID] = useState(null);
 
   useEffect(() => {
     activeIDRef.current = activeID;
@@ -38,6 +39,7 @@ export default function ChatScreen() {
     onToken((token) => {
       if (token === null) {
         streamingIDRef.current = null;
+        setStreamingID(null);
         return;
       }
 
@@ -56,7 +58,8 @@ export default function ChatScreen() {
 
           const newMessage = createMessage("assistant", token);
           streamingIDRef.current = newMessage.messageID;
-          return { ...c, messages: [...messages,newMessage] };
+          setStreamingID(newMessage.messageID);
+          return { ...c, messages: [...messages, newMessage] };
         })
       );
     });
@@ -141,7 +144,7 @@ export default function ChatScreen() {
             <MessageBubble
               key={msg.messageID}
               message={msg}
-              isStreaming={msg.messageID === streamingIDRef.current}
+              isStreaming={msg.messageID === streamingID}
             />
           ))}
           <div ref={chatEndRef} />
