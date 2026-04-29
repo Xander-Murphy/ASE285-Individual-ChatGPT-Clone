@@ -2,3 +2,14 @@
 - Week 2: Surface level research into unfamiliar systems and tools
 - Week 3: Basic construction of a conversation with a LLM
 - Week 4: Stylized chat and basic react implementation
+- Week 5: Started looking into tools such as React and Docker
+- Week 6: ~60 lines of code getting basic communications with LLM
+- Week 7: 241 lines of code
+- Week 8: Time Spent on midterm prep 
+- Week 9: Spring Break
+- Week 10: Preliminary research into message formatting for client view
+- Week 11: Preliminary research into WebSockets and streaming alternatives
+- Week 12: Everything separated out of main.jsx implementation of tests
+- Week 13-14: Changed how messages are stored and how the server gets history, everything is now pulling from localStorage
+- Week 15: Multiple chats, creation and deletion of new chats, streaming, markdown formatting, naming of chats
+- Week 16: Electron App, math formatting in messages, final testing files

@@ -34,27 +34,19 @@
   - local torage and session storage persistence
 
 ## Data Model
+The system stores chat-related data locally using localStorage to support conversation persistence.
 
-  The system stores chat-related data locally to support conversation persistence
+### Conversation
+- conversationID
+- title
+- createdAt
+- messages[]
 
-  ### User
-  - userID
-  - sessionID
-  
-  ### ChatSession
-  - sessionID
-  - createdAt
-  - conversations
-
-  ### Conversation
-  - conversationID
-  - title
-  - messages[]
-
-  ### Message
-  - messageID
-  - role (user or response)
-  - timestamp
+### Message
+- messageID
+- role (user or assistant)
+- content
+- timestamp
 
 ## Architecture
 
@@ -66,9 +58,7 @@
   - The backend communicates with OpenAI's API to generate chat responses
   - Conversation data persists in local and session storages.
 
-  [Insert architecture diagram here]
-
-  Link:
+  Link: https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/architecture/system_architecture.pdf
 
 ## Tests
 
@@ -76,25 +66,32 @@
 
 - ...
 
-  Link:
+  Link: https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/tree/main/tests/acceptance_tests 
 
 ### Integration Tests
 
 - ...
 
-  Link:
+  Link: https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/tree/main/tests/integration_tests
 
-### E2E Tests
+### Regression Tests
 
 - ...
 
-  Link:
+Link: https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/tree/main/tests/regression_tests
+
+### Unit Tests
+
+- ...
+
+  Link: https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/tree/main/tests/unit_tests
 
 ## Project Documentation
 
 - [Project Plan Presentation (PPP)](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/docs/Presentation/01_ppp_chat285.md)
 - [Individual Contributions - Xander](https://github.com/Xander-Murphy/ASE285-Individual-ChatGPT-Clone/blob/main/individual/Xander/progress.md)
 - 
+
 ## Schedule & Milestones
 
 ### Sprint 1
